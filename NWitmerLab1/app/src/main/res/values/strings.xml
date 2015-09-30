@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">NWitmerLab1</string>
+
+    <string name="Title">One Question Survey</string>
+    <string name="NamePrompt">First Name:</string>
+    <string name="surveyBtn">Take Survey</string>
+    <string name="webBtn">Goto Website</string>
+    <string name="action_settings">Settings</string>
+</resources>
