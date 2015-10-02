@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
@@ -60,6 +61,29 @@ public class MainActivity extends AppCompatActivity
         else
         {
             Toast.makeText(getApplicationContext(), name, Toast.LENGTH_SHORT).show();
+            Intent survey = new Intent(this, SurveyActivity.class);
+            survey.putExtra("Name", name);
+            startActivityForResult(survey, 2);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == 2)
+        {
+            TextView greeting = (TextView)findViewById(R.id.result);
+            int age = data.getIntExtra("Age", 1);
+            if(age < 40)
+            {
+                greeting.setText("You're under 40, so you're trustworthy");
+            }
+            else
+            {
+                greeting.setText("You're NOT under 40, so you're  NOT trustworthy");
+            }
         }
     }
 
