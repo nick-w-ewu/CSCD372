@@ -1,5 +1,6 @@
 package com.witmer.nicholas.nwitmerlab1;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
@@ -11,7 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends TracerActivity
 {
 
     @Override
@@ -19,6 +20,19 @@ public class MainActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Intent incoming = getIntent();
+        if(incoming != null)
+        {
+            String action = incoming.getAction();
+            String type = incoming.getType();
+
+            if(action.equals(Intent.ACTION_SEND) && type.equals("text/plain"))
+            {
+                TextView greeting = (TextView)findViewById(R.id.result);
+                String sent = incoming.getStringExtra(Intent.EXTRA_TEXT);
+                greeting.setText(sent);
+            }
+        }
     }
 
     @Override
@@ -38,10 +52,6 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings)
-        {
-            return true;
-        }
         if(id == R.id.action_about)
         {
             Toast.makeText(getApplicationContext(), "Android Lab 1, Nicholas Witmer", Toast.LENGTH_SHORT).show();
@@ -60,7 +70,6 @@ public class MainActivity extends AppCompatActivity
         }
         else
         {
-            Toast.makeText(getApplicationContext(), name, Toast.LENGTH_SHORT).show();
             Intent survey = new Intent(this, SurveyActivity.class);
             survey.putExtra("Name", name);
             startActivityForResult(survey, 2);
@@ -72,7 +81,7 @@ public class MainActivity extends AppCompatActivity
     {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == 2)
+        if(requestCode == 2 && resultCode == Activity.RESULT_OK)
         {
             TextView greeting = (TextView)findViewById(R.id.result);
             int age = data.getIntExtra("Age", 1);
