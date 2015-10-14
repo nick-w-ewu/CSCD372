@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 /**
  * Created by nicho on 10/9/2015.
  */
-public class MyListAdapter extends BaseExpandableListAdapter
+public class MyListAdapter extends BaseExpandableListAdapter implements View.OnClickListener
 {
     Activity caller;
     ArrayList<String> manufacturers;
@@ -93,6 +94,10 @@ public class MyListAdapter extends BaseExpandableListAdapter
             convertView = inflater.inflate(R.layout.child_layout, null);
         }
         TextView text = (TextView)convertView.findViewById(R.id.childText);
+        ImageView btn = (ImageView)convertView.findViewById(R.id.deleteBtn);
+        btn.setTag(R.id.group_num, groupPosition);
+        btn.setTag(R.id.posn_num, childPosition);
+        btn.setOnClickListener(this);
         text.setText(this.models.get(groupPosition).get(childPosition));
         return convertView;
     }
@@ -101,5 +106,14 @@ public class MyListAdapter extends BaseExpandableListAdapter
     public boolean isChildSelectable(int groupPosition, int childPosition)
     {
         return true;
+    }
+
+    @Override
+    public void onClick(View v)
+    {
+        int group = (int)v.getTag(R.id.group_num);
+        int child = (int)v.getTag(R.id.posn_num);
+        models.get(group).remove(child);
+        notifyDataSetChanged();
     }
 }

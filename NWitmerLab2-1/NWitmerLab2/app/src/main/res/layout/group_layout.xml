@@ -11,6 +11,6 @@
         android:text="Group"
         android:id="@+id/group1"
         android:layout_gravity="center_horizontal"
-        android:textSize="30dp"
+        android:textSize="22dp"
         android:textStyle="bold"/>
 </LinearLayout>
