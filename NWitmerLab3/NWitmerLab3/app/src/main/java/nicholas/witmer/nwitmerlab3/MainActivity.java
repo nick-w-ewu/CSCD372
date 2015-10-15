@@ -27,6 +27,13 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         navDrawer = (DrawerLayout)findViewById(R.id.drawer_layout);
         musicals = (ListView)findViewById(R.id.left_drawer);
+        DrawerItem[] images = new DrawerItem[6];
+        images[0] = new DrawerItem(R.drawable.marypoppins, "Mary Poppins");
+        images[1] = new DrawerItem(R.drawable.birdie, "Bye Bye Birdie");
+        images[2] = new DrawerItem(R.drawable.fiddler, "Fiddler on the Roof");
+        images[3] = new DrawerItem(R.drawable.seussical, "Seusical the Musical");
+        images[4] = new DrawerItem(R.drawable.musicman, "The Music Man");
+        images[5] = new DrawerItem(R.drawable.oz, "The Wizard of Oz");
 
     }
 

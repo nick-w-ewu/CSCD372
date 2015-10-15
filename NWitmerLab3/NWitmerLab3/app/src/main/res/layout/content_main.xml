@@ -4,7 +4,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+
     <!-- The main content view -->
     <FrameLayout
         android:id="@+id/content_frame"
@@ -16,7 +16,7 @@
             android:layout_height="match_parent"
             android:id="@+id/imageView"
             android:layout_gravity="center"
-            android:src="@drawable/marypoppins_06" />
+            android:src="@drawable/marypoppins" />
     </FrameLayout>
     <!-- The navigation drawer -->
     <ListView android:id="@+id/left_drawer"
@@ -27,4 +27,5 @@
         android:divider="@android:color/transparent"
         android:dividerHeight="0dp"
         android:background="#111"/>
+
 </android.support.v4.widget.DrawerLayout>
