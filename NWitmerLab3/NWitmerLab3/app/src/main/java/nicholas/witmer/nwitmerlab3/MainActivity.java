@@ -35,6 +35,9 @@ public class MainActivity extends AppCompatActivity
         images[4] = new DrawerItem(R.drawable.musicman, "The Music Man");
         images[5] = new DrawerItem(R.drawable.oz, "The Wizard of Oz");
 
+        SelectionAdapter options = new SelectionAdapter(this, R.layout.nav_list_row, images);
+        musicals.setAdapter(options);
+
     }
 
     @Override
