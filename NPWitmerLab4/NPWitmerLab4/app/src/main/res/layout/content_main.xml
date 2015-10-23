@@ -14,8 +14,8 @@
     tools:context=".MainActivity">
 
     <com.witmer.nicholas.npwitmerlab4.SevenSegment
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:id="@+id/view"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"

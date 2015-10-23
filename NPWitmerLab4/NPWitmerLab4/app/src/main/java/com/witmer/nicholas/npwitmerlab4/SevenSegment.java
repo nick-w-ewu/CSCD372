@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Path;
+import android.graphics.Region;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -48,29 +49,33 @@ public class SevenSegment extends View
     @Override
     public void onDraw(Canvas canvas)
     {
+        super.onDraw(canvas);
+        Path segment ;
         setLayerType(this.LAYER_TYPE_SOFTWARE, null);
         float canvasWidth = getWidth();
         float canvasHight = getHeight();
         float wScale = canvasWidth/(float)this.width;
         float hScale = canvasHight/(float)this.hight;
-        canvas.scale(wScale, hScale);
+        canvas.drawColor(Color.BLACK);
+        canvas.scale(8, 8);
         canvas.save();
-        makePath(canvas);
-        canvas.translate(0,12);
-        makePath(canvas);
-    }
-
-    private void makePath(Canvas canvas)
-    {
-        Path segment = new Path();
-        segment.moveTo(this.vertices[0], this.vertices[1]);
-        segment.lineTo(this.vertices[2], this.vertices[3]);
-        segment.lineTo(this.vertices[4], this.vertices[5]);
-        segment.lineTo(this.vertices[6], this.vertices[7]);
-        segment.lineTo(this.vertices[8], this.vertices[9]);
-        segment.lineTo(this.vertices[10], this.vertices[11]);
-        segment.close();
+        segment = makePath(canvas);
         canvas.clipPath(segment);
         canvas.drawColor(on);
+
+    }
+
+    private Path makePath(Canvas canvas)
+    {
+        float[] vertices = {4,4, 2,6, 2,12, 4,14, 6,12, 6,6};
+        Path segment = new Path();
+        segment.moveTo(vertices[0], vertices[1]);
+        segment.lineTo(vertices[2], vertices[3]);
+        segment.lineTo(vertices[4], vertices[5]);
+        segment.lineTo(vertices[6], vertices[7]);
+        segment.lineTo(vertices[8], vertices[9]);
+        segment.lineTo(vertices[10], vertices[11]);
+        segment.close();
+        return segment ;
     }
 }
