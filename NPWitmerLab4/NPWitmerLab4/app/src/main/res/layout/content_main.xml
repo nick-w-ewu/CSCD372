@@ -13,4 +13,11 @@
     tools:showIn="@layout/activity_main"
     tools:context=".MainActivity">
 
+    <com.witmer.nicholas.npwitmerlab4.SevenSegment
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/view"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="53dp" />
 </RelativeLayout>
