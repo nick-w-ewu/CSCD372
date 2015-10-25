@@ -11,7 +11,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
-
+    int displayValue;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,6 +19,22 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        if(savedInstanceState != null)
+        {
+            int temp = savedInstanceState.getInt("number");
+            this.displayValue = temp;
+        }
+        else
+        {
+            this.displayValue = 0;
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState)
+    {
+        super.onSaveInstanceState(outState);
+        outState.putInt("number", displayValue);
     }
 
     @Override
@@ -26,6 +42,18 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    public void incrementDisplay(View v)
+    {
+        SevenSegment display = (SevenSegment)findViewById(R.id.display1);
+        if(displayValue == 10)
+        {
+            displayValue = 0;
+        }
+        display.setCurNum(displayValue);
+        displayValue++;
+        display.invalidate();
     }
 
     @Override

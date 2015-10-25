@@ -5,6 +5,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.Region;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -15,12 +17,26 @@ public class SevenSegment extends View
 {
     private int curNum;
     private int[] curSegments;
-    private final int hight = 32;
-    private final int width = 20;
+    private final int[][] numTable= {{1,0,1,1,1,1,1},
+                                     {0,0,0,0,0,1,1},
+                                     {1,1,1,0,1,0,1},
+                                     {1,1,1,0,0,1,1},
+                                     {0,1,0,1,0,1,1},
+                                     {1,1,1,1,0,1,0},
+                                     {1,1,1,1,1,1,0},
+                                     {1,0,0,0,0,1,1},
+                                     {1,1,1,1,1,1,1},
+                                     {1,1,1,1,0,1,1},
+                                     {0,0,0,0,0,0,0}};
+    private final float oHight = 32f;
+    private final float oWidth = 20f;
+    private float cHight;
+    private float cWidth;
     private final int margin = 2;
-    private final float aspectRatio = width/hight;
-    private final float[] vertices = {6, 6, 12, 6, 14, 4, 12, 2, 6, 2, 4, 4};
+    private final float aspectRatio = .8754f;
+    private final float[] verticies = {4,4, 2,6, 2,14, 4,16, 6,14, 6,6};
     private final int on = Color.rgb(255, 0, 0);
+    private final int off = Color.rgb(76,0,0);
 
     public SevenSegment(Context context)
     {
@@ -40,10 +56,73 @@ public class SevenSegment extends View
         initializeValues();
     }
 
+    @Override
+    public Parcelable onSaveInstanceState()
+    {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("instanceState", super.onSaveInstanceState());
+        bundle.putInt("currentNum", this.curNum);
+
+        return bundle;
+    }
+
+    @Override
+    public void onRestoreInstanceState(Parcelable state)
+    {
+        if(state instanceof Bundle)
+        {
+            Bundle b = (Bundle)state;
+            this.curNum = b.getInt("currentNum");
+            this.curSegments = this.numTable[this.curNum];
+            state = b.getParcelable("instanceState");
+        }
+        super.onRestoreInstanceState(state);
+    }
+
     private void initializeValues()
     {
-        this.curNum = 0;
-        this.curSegments = new int[7];
+        this.curNum = 10;
+        this.curSegments = numTable[10];
+    }
+
+    public int getCurNum()
+    {
+        return this.curNum;
+    }
+
+    public void setCurNum(int num)
+    {
+        this.curNum = num;
+        this.curSegments = numTable[num];
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int odlw, int oldh)
+    {
+        super.onSizeChanged(w, h, odlw, oldh);
+        this.cHight = h;
+        this.cWidth = w;
+    }
+
+    @Override
+    protected void onMeasure(int mWidth, int mHeight)
+    {
+        super.onMeasure(mWidth, mHeight);
+        int fWidth, fHeight;
+        int width, height;
+        width = getMeasuredWidth();
+        height = getMeasuredHeight();
+        fWidth = (int)(height * this.aspectRatio);
+        fHeight = (int)(width/this.aspectRatio);
+
+        if(width > fWidth)
+        {
+            setMeasuredDimension(height, fWidth);
+        }
+        else
+        {
+            setMeasuredDimension(fHeight, width);
+        }
     }
 
     @Override
@@ -52,30 +131,63 @@ public class SevenSegment extends View
         super.onDraw(canvas);
         Path segment ;
         setLayerType(this.LAYER_TYPE_SOFTWARE, null);
-        float canvasWidth = getWidth();
-        float canvasHight = getHeight();
-        float wScale = canvasWidth/(float)this.width;
-        float hScale = canvasHight/(float)this.hight;
+        float wScale = cWidth/(float)this.oWidth;
+        float hScale = cHight/(float)this.oHight;
         canvas.drawColor(Color.BLACK);
-        canvas.scale(8, 8);
+        canvas.scale(wScale, hScale);
         canvas.save();
-        segment = makePath(canvas);
-        canvas.clipPath(segment);
-        canvas.drawColor(on);
-
+        drawPathH(canvas, 0);
+        canvas.translate(0, 12);
+        drawPathH(canvas, 1);
+        canvas.translate(0,12);
+        drawPathH(canvas, 2);
+        canvas.restore();
+        drawPathV(canvas, 3);
+        canvas.translate(0,12);
+        drawPathV(canvas, 4);
+        canvas.translate(12, 0);
+        drawPathV(canvas, 5);
+        canvas.translate(0, -12);
+        drawPathV(canvas, 6);
     }
 
-    private Path makePath(Canvas canvas)
+    private void drawPathV(Canvas canvas, int line)
     {
-        float[] vertices = {4,4, 2,6, 2,12, 4,14, 6,12, 6,6};
         Path segment = new Path();
-        segment.moveTo(vertices[0], vertices[1]);
-        segment.lineTo(vertices[2], vertices[3]);
-        segment.lineTo(vertices[4], vertices[5]);
-        segment.lineTo(vertices[6], vertices[7]);
-        segment.lineTo(vertices[8], vertices[9]);
-        segment.lineTo(vertices[10], vertices[11]);
+        segment.moveTo(verticies[0], verticies[1]);
+        for(int i = 2; i < verticies.length-1; i= i + 2)
+        {
+            segment.lineTo(verticies[i], verticies[i+1]);
+        }
         segment.close();
-        return segment ;
+        canvas.clipPath(segment, Region.Op.REPLACE);
+        if(this.curSegments[line] == 1)
+        {
+            canvas.drawColor(on);
+        }
+        else
+        {
+            canvas.drawColor(off);
+        }
+    }
+
+    private void drawPathH(Canvas canvas, int line)
+    {
+        Path segment = new Path();
+        segment.moveTo(verticies[0], verticies[1]);
+        for(int i = 2; i < verticies.length-1; i= i + 2)
+        {
+            segment.lineTo(verticies[i+1], verticies[i]);
+        }
+        segment.close();
+        canvas.clipPath(segment, Region.Op.REPLACE);
+        if(this.curSegments[line] == 1)
+        {
+            canvas.drawColor(on);
+        }
+        else
+        {
+            canvas.drawColor(off);
+        }
     }
 }
