@@ -33,7 +33,7 @@ public class SevenSegment extends View
     private float cHight;
     private float cWidth;
     private final int margin = 2;
-    private final float aspectRatio = .8754f;
+    private final float aspectRatio = 1f;
     private final float[] verticies = {4,4, 2,6, 2,14, 4,16, 6,14, 6,6};
     private final int on = Color.rgb(255, 0, 0);
     private final int off = Color.rgb(76,0,0);
@@ -92,8 +92,16 @@ public class SevenSegment extends View
 
     public void setCurNum(int num)
     {
-        this.curNum = num;
-        this.curSegments = numTable[num];
+        if(num > 9)
+        {
+            this.curNum = 10;
+            this.curSegments = this.numTable[10];
+        }
+        else
+        {
+            this.curNum = num;
+            this.curSegments = numTable[num];
+        }
     }
 
     @Override
@@ -115,7 +123,7 @@ public class SevenSegment extends View
         fWidth = (int)(height * this.aspectRatio);
         fHeight = (int)(width/this.aspectRatio);
 
-        if(width > fWidth)
+        if(fHeight > height)
         {
             setMeasuredDimension(height, fWidth);
         }

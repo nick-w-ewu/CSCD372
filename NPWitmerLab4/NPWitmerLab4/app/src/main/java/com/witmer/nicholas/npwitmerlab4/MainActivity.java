@@ -47,13 +47,23 @@ public class MainActivity extends AppCompatActivity {
     public void incrementDisplay(View v)
     {
         SevenSegment display = (SevenSegment)findViewById(R.id.display1);
+        SevenSegment display2 = (SevenSegment)findViewById(R.id.view);
+        SevenSegment display3 = (SevenSegment)findViewById(R.id.view3);
+        SevenSegment display4 = (SevenSegment)findViewById(R.id.view2);
         if(displayValue == 10)
         {
             displayValue = 0;
         }
         display.setCurNum(displayValue);
+        display2.setCurNum(displayValue+1);
+        display3.setCurNum(displayValue+2);
+        display4.setCurNum(displayValue+3);
         displayValue++;
         display.invalidate();
+        display2.invalidate();
+        display3.invalidate();
+        display4.invalidate();
+
     }
 
     @Override
