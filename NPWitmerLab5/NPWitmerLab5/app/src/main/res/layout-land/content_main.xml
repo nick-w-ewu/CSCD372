@@ -14,11 +14,20 @@
     tools:context=".MainActivity"
     android:orientation="horizontal">
 
-    <FrameLayout
+    <fragment
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:id="@+id/portHolder"
+        android:name="com.witmer.nicholas.npwitmerlab5.MainFragment"
+        android:id="@+id/mainHolder"
         android:layout_gravity="center_vertical"
         android:layout_weight="1"/>
 
+    <fragment
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:name="com.witmer.nicholas.npwitmerlab5.DetailFragment"
+        android:id="@+id/detailHolder"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:tag="details"/>
 </LinearLayout>
