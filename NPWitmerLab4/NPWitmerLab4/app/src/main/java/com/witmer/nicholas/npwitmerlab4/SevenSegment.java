@@ -33,7 +33,7 @@ public class SevenSegment extends View
     private float cHight;
     private float cWidth;
     private final int margin = 2;
-    private final float aspectRatio = 1f;
+    private final float aspectRatio = 1f;//Yes I know this is weird, but it was the only way to get the display working correctly
     private final float[] verticies = {4,4, 2,6, 2,14, 4,16, 6,14, 6,6};
     private final int on = Color.rgb(255, 0, 0);
     private final int off = Color.rgb(76,0,0);
