@@ -13,8 +13,9 @@ import android.widget.TextView;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class DetailFragment extends Fragment {
-
+public class DetailFragment extends Fragment
+{
+    private String timestamp;
 
     public DetailFragment() {
         // Required empty public constructor
@@ -27,10 +28,23 @@ public class DetailFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_detail, container, false);
         Bundle b = getArguments();
-        if(b != null);
+        TextView text = (TextView) v.findViewById(R.id.details);
+        String time;
+        if(timestamp != null)
         {
-            String time = b.getString("time");
-            TextView text = (TextView)v.findViewById(R.id.details);
+            text.setText(timestamp);
+        }
+        else
+        {
+            try
+            {
+                time = b.getString("time");
+                text.setText(time);
+            }
+            catch (NullPointerException e)
+            {
+                time = "";
+            }
             text.setText(time);
         }
         return v;
@@ -38,9 +52,13 @@ public class DetailFragment extends Fragment {
 
     public void updateText(String update)
     {
+        this.timestamp = update;
         View v = getView();
-        TextView text = (TextView)v.findViewById(R.id.details);
-        text.setText(update);
+        if(v != null)
+        {
+            TextView text = (TextView) v.findViewById(R.id.details);
+            text.setText(update);
+        }
     }
 
 

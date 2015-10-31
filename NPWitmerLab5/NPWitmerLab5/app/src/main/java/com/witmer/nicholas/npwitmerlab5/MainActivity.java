@@ -16,19 +16,55 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements MainFragment.UpdateListener
 {
-
+    int landscapeFirst;
+    String timestamp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        if (savedInstanceState == null) {
-            getFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.portHolder, new MainFragment())
-                    .commit();
+
+        if (savedInstanceState == null)
+        {
+            if(landscapeOrientation())
+            {
+                landscapeFirst = 1;
+            }
+            else
+            {
+                getFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.portHolder, new MainFragment())
+                        .commit();
+            }
         }
+        else if(savedInstanceState != null)
+        {
+            this.landscapeFirst = savedInstanceState.getInt("landscapeFirst");
+            this.timestamp = savedInstanceState.getString("time");
+            if(this.landscapeFirst == 1 && !landscapeOrientation())
+            {
+                getFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.portHolder, new MainFragment())
+                        .commit();
+                this.landscapeFirst = 0;
+            }
+            if(landscapeOrientation())
+            {
+                DetailFragment toUpdate = (DetailFragment) getFragmentManager().findFragmentById(R.id.detailHolder);
+                toUpdate.updateText(this.timestamp);
+                getFragmentManager().popBackStack(0, getFragmentManager().POP_BACK_STACK_INCLUSIVE);
+            }
+        }
+    }
+
+    public void onSaveInstanceState(Bundle outState)
+    {
+        super.onSaveInstanceState(outState);
+        outState.putInt("landscapeFirst", this.landscapeFirst);
+        outState.putString("time", this.timestamp);
     }
 
     private boolean landscapeOrientation()
@@ -63,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Upda
     public void onFragmentInteraction(String data)
     {
         DetailFragment toUpdate;
+        this.timestamp = data;
         if(landscapeOrientation())
         {
             toUpdate = (DetailFragment) getFragmentManager().findFragmentById(R.id.detailHolder);
@@ -85,8 +122,23 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Upda
                 toUpdate.setArguments(b);
                 FragmentTransaction trans = getFragmentManager().beginTransaction();
                 trans.replace(R.id.portHolder, toUpdate, "DETAIL_FRAGMENT");
+                trans.addToBackStack(null);
                 trans.commit();
             }
+        }
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        int count = getFragmentManager().getBackStackEntryCount();
+        if(count > 0)
+        {
+            getFragmentManager().popBackStack();
+        }
+        else
+        {
+            super.onBackPressed();
         }
     }
 }
