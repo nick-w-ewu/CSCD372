@@ -1,5 +1,6 @@
 package com.witmer.nicholas.npwitmerlab5;
 
+import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -85,7 +86,13 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Upda
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_about) {
-            Toast.makeText(getApplicationContext(), "Android Lab 5, Nicholas Witmer", Toast.LENGTH_SHORT).show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this) ;
+            builder.setTitle("About")
+                    .setMessage("Nicholas Witmer, CSCD 372, Fall 2015, Lab 5")
+                    .setNeutralButton("OK", null)
+                    .setCancelable(false)
+                    .create()
+                    .show();
         }
 
         return super.onOptionsItemSelected(item);
