@@ -2,12 +2,9 @@ package com.witmer.nicholas.npwitmerlab5;
 
 import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.telecom.Call;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
@@ -55,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Upda
             {
                 DetailFragment toUpdate = (DetailFragment) getFragmentManager().findFragmentById(R.id.detailHolder);
                 toUpdate.updateText(this.timestamp);
-                getFragmentManager().popBackStack(0, getFragmentManager().POP_BACK_STACK_INCLUSIVE);
             }
         }
     }
@@ -131,14 +127,22 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Upda
     @Override
     public void onBackPressed()
     {
-        int count = getFragmentManager().getBackStackEntryCount();
-        if(count > 0)
+        if(landscapeOrientation())
         {
-            getFragmentManager().popBackStack();
+            getFragmentManager().popBackStack(0, getFragmentManager().POP_BACK_STACK_INCLUSIVE);
+            super.onBackPressed();
         }
         else
         {
-            super.onBackPressed();
+            int count = getFragmentManager().getBackStackEntryCount();
+            if (count > 0)
+            {
+                getFragmentManager().popBackStack();
+            }
+            else
+            {
+                super.onBackPressed();
+            }
         }
     }
 }
