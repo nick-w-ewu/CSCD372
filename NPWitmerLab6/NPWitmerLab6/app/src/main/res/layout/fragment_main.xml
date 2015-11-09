@@ -1,0 +1,54 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context="com.witmer.nicholas.npwitmerlab6.MainFragment">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Hello"
+        android:id="@+id/Name"
+        android:textSize="20dp"
+        android:textColor="#000000"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Welcome Back"
+        android:id="@+id/welcome"
+        android:textSize="20dp"
+        android:textColor="#000000"
+        android:layout_below="@+id/Name"
+        android:layout_alignLeft="@+id/Name"
+        android:layout_alignStart="@+id/Name"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Suggestion"
+        android:id="@+id/suggestion"
+        android:textSize="20dp"
+        android:textColor="#000000"
+        android:layout_below="@+id/welcome"
+        android:layout_alignLeft="@+id/welcome"
+        android:layout_alignStart="@+id/welcome"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/mainImage"
+        android:src="@drawable/academy"
+        android:layout_below="@+id/suggestion"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:scaleType="fitCenter"
+        android:padding="15dp"/>
+</RelativeLayout>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:key="name"
+        android:title="Name:"
+        android:singleLine="true"
+        android:summary="(unknown)"
+        />
+
+    <CheckBoxPreference
+        android:key="is_student"
+        android:title="Student?"
+        android:defaultValue="false"
+        />
+
+    <EditTextPreference
+        android:key="years_remaining"
+        android:title="Years to Commission"
+        android:dependency="is_student"
+        android:inputType="number"
+        android:summary="unknown"
+        />
+
+    <ListPreference
+        android:key="home_world"
+        android:title="Home World"
+        android:dependency="is_student"
+        android:summary="unknown"
+        android:entries="@array/home_worlds"
+        android:entryValues="@array/worlds_indices"
+        />
+</PreferenceScreen>
