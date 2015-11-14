@@ -13,4 +13,10 @@
     tools:showIn="@layout/activity_main"
     tools:context=".MainActivity">
 
+    <com.witmer.nicholas.ashman.Maze
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/view"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"/>
 </RelativeLayout>
