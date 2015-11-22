@@ -11,11 +11,36 @@
         android:id="@+id/buttons">
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="New Button"
-            android:id="@+id/button"
-            />
+            android:text="MARK +/-"
+            android:id="@+id/mark"
+            android:layout_weight="2"
+            android:onClick="onMark" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="+"
+            android:id="@+id/zoomIn"
+            android:layout_weight="1"
+            android:onClick="onPlus" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="-"
+            android:id="@+id/zoomOut"
+            android:layout_weight="1"
+            android:onClick="onMinus" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Change Type"
+            android:id="@+id/type"
+            android:layout_weight="2"
+            android:onClick="onTypeChange" />
     </LinearLayout>
 
     <fragment android:id="@+id/map"
