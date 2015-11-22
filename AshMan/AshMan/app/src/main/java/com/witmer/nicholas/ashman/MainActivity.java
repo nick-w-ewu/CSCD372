@@ -8,16 +8,32 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener
+{
 
+    Maze maze;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        ImageView up = (ImageView)findViewById(R.id.up);
+        ImageView down = (ImageView)findViewById(R.id.down);
+        ImageView left = (ImageView)findViewById(R.id.left);
+        ImageView right = (ImageView)findViewById(R.id.right);
+        maze = (Maze)findViewById(R.id.mazeView);
+        up.setTag(1);
+        down.setTag(2);
+        right.setTag(3);
+        left.setTag(4);
+        up.setOnClickListener(this);
+        down.setOnClickListener(this);
+        left.setOnClickListener(this);
+        right.setOnClickListener(this);
     }
 
     @Override
@@ -40,5 +56,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View v)
+    {
+        int direction = (int)v.getTag();
+        this.maze.moveCharacter(direction);
     }
 }

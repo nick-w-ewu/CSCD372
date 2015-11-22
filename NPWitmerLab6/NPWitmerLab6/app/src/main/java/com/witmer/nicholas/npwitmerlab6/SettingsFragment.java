@@ -53,7 +53,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         else if(key.equalsIgnoreCase("home_world"))
         {
             String[] worlds = getResources().getStringArray(R.array.home_worlds);
-            int ix = Integer.parseInt(sharedPreferences.getString("home_world", null));
+            int ix = Integer.parseInt(sharedPreferences.getString("home_world", "0"));
             pref.setSummary(worlds[ix]);
         }
     }

@@ -46,9 +46,9 @@ public class MainFragment extends Fragment
         nameView.setText("Hello " + name);
         sugesstion.setText("May we suggest the following desktop backround for you?");
         if (isStudent) {
-            int years = Integer.parseInt(sharedPref.getString("years_remaining", null));
+            String years = sharedPref.getString("years_remaining", null);
             greeting.setText("We wish you sucess during your " + years + " years at the academy");
-            int homeworld = Integer.parseInt(sharedPref.getString("home_world", null));
+            int homeworld = Integer.parseInt(sharedPref.getString("home_world", "0"));
             backround.setImageResource(this.images[homeworld]);
         } else {
             greeting.setText("Welcome back");
