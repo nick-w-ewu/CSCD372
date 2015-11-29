@@ -1,5 +1,6 @@
 package com.witmer.nicholas.ashman;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -9,14 +10,17 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, UpdateGameStats
 {
 
     Maze maze;
+    TextView cakeCount;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -26,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ImageView left = (ImageView)findViewById(R.id.left);
         ImageView right = (ImageView)findViewById(R.id.right);
         maze = (Maze)findViewById(R.id.mazeView);
+        cakeCount = (TextView)findViewById(R.id.cakeCount);
         up.setTag(1);
         down.setTag(2);
         right.setTag(3);
@@ -54,6 +59,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (id == R.id.action_settings) {
             return true;
         }
+        if (id == R.id.action_about) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this) ;
+            builder.setTitle("About")
+                    .setMessage("Nicholas Witmer, CSCD 372, Fall 2015, Final Project AshMan")
+                    .setNeutralButton("OK", null)
+                    .setCancelable(false)
+                    .create()
+                    .show();
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -62,6 +76,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v)
     {
         int direction = (int)v.getTag();
-        this.maze.moveCharacter(direction);
+        this.maze.userMove(direction);
+    }
+
+    @Override
+    public void updateCakeCount(int cakes)
+    {
+        cakeCount.setText(String.valueOf(cakes));
     }
 }

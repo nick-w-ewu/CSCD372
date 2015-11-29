@@ -1,5 +1,6 @@
 package com.witmer.nicholas.npwitmerlab9;
 
+import android.app.AlertDialog;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -43,10 +44,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         this.removableMarkers = new ArrayList<Marker>();
         Button addMark = (Button)findViewById(R.id.mark);
+        Button type = (Button)findViewById(R.id.type);
+        addMark.setTag(1);
+        type.setTag(2);
         addMark.setOnLongClickListener(this);
+        type.setOnLongClickListener(this);
         if(savedInstanceState == null)
         {
             markers = new ArrayList<MarkerOptions>();
+            Toast.makeText(this, "For about long press Change Type button", Toast.LENGTH_SHORT).show();
         }
         else
         {
@@ -58,6 +64,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             this.zoom = savedInstanceState.getFloat("zoom");
             this.markerCount = savedInstanceState.getInt("numMarkers");
         }
+
     }
 
     @Override
@@ -172,15 +179,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public boolean onLongClick(View v)
     {
-        if(this.removableMarkers.size() >0)
+        if((int)v.getTag() == 1)
         {
-            int last = this.removableMarkers.size() - 1;
-            Marker mark = this.removableMarkers.get(last);
-            mark.remove();
-            this.removableMarkers.remove(last);
-            this.markerCount--;
-            this.markers.remove(this.markers.size() - 1);
-            return true;
+            if (this.removableMarkers.size() > 0)
+            {
+                int last = this.removableMarkers.size() - 1;
+                Marker mark = this.removableMarkers.get(last);
+                mark.remove();
+                this.removableMarkers.remove(last);
+                this.markerCount--;
+                this.markers.remove(this.markers.size() - 1);
+                return true;
+            }
+        }
+        else if((int)v.getTag() == 2)
+        {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this) ;
+            builder.setTitle("About")
+                    .setMessage("Nicholas Witmer, CSCD 372, Fall 2015, Lab 9")
+                    .setNeutralButton("OK", null)
+                    .setCancelable(false)
+                    .create()
+                    .show();
+
         }
         return true;
     }

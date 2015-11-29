@@ -6,150 +6,386 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Region;
+import android.media.MediaPlayer;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.Toast;
+
+
+import java.util.Random;
 
 /**
  * Created by nicho on 11/12/2015.
  */
-public class Maze extends View
+public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCompletionListener
 {
-    private int[][] maze = {{0,2,2,2,2,2,1,2,2,2,2,1,1,1},
-                            {2,2,1,2,1,2,1,2,1,2,2,2,2,1},
-                            {1,2,1,1,1,2,2,2,1,2,1,1,2,1},
-                            {2,2,2,2,1,2,1,2,2,1,2,2,2,1},
-                            {2,2,1,2,2,2,2,2,2,1,2,1,1,1},
-                            {1,2,1,1,2,2,1,1,2,2,2,2,2,2},
-                            {2,1,2,2,2,2,1,1,1,1,2,1,2,1},
-                            {2,1,2,2,1,2,1,2,1,2,1,1,2,1},
-                            {2,2,2,1,2,2,2,2,2,2,1,1,2,1},
-                            {2,1,2,1,2,2,2,1,1,1,2,1,2,1},
-                            {2,1,2,2,1,1,2,2,2,2,2,2,2,1},
-                            {2,1,1,2,2,1,1,1,2,2,1,1,2,1},
-                            {2,2,2,1,2,2,1,2,2,2,2,1,2,2},
-                            {1,1,1,2,2,2,1,1,2,1,2,2,1,2}};
+    private int[][] maze = {{-1,2,2,2,2,2,1,2,2,2,2,1,1,1},
+            {2,2,1,2,1,2,1,2,1,2,2,2,2,1},
+            {1,2,1,1,1,2,2,2,1,2,1,1,2,1},
+            {2,2,2,2,1,2,1,2,2,1,2,2,2,1},
+            {2,2,1,2,2,2,2,2,2,1,2,1,1,1},
+            {1,2,1,1,2,2,1,1,2,2,2,2,2,2},
+            {2,1,2,2,2,2,1,1,1,1,2,1,2,1},
+            {2,1,2,2,1,2,1,2,1,2,1,1,2,1},
+            {2,2,2,1,2,2,2,2,2,2,1,1,2,1},
+            {2,1,2,1,2,2,2,1,1,1,2,1,2,1},
+            {2,1,2,2,1,1,2,2,2,2,2,2,2,1},
+            {2,1,1,2,2,1,1,1,2,2,1,1,2,1},
+            {2,2,2,1,2,2,1,2,2,2,2,1,2,2},
+            {1,1,1,2,2,2,1,1,2,1,2,2,1,2}};
 
-    private int[][] maze1 = {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-            {1,0,2,2,2,2,2,1,2,2,2,2,1,1,1,1},
-            {1,2,2,1,2,1,2,1,2,1,2,2,2,2,1,1},
-            {1,1,2,1,1,1,2,2,2,1,2,1,1,2,1,1},
-            {1,2,2,2,2,1,2,1,2,2,1,2,2,2,1,1},
-            {1,2,2,1,2,2,2,2,2,2,1,2,1,1,1,1},
-            {1,1,2,1,1,2,2,1,1,2,2,2,2,2,2,1},
-            {1,2,1,2,2,2,2,1,1,1,1,2,1,2,1,1},
-            {1,2,1,2,2,1,2,1,2,1,2,1,1,2,1,1},
-            {1,2,2,2,1,2,2,2,2,2,2,1,1,2,1,1},
-            {1,2,1,2,1,2,2,2,1,1,1,2,1,2,1,1},
-            {1,2,1,2,2,1,1,2,2,2,2,2,2,2,1,1},
-            {1,2,1,1,2,2,1,1,1,2,2,1,1,2,1,1},
-            {1,2,2,2,1,2,2,1,2,2,2,2,1,2,2,1},
-            {1,1,1,1,2,2,2,1,1,2,1,2,2,1,2,1},
-            {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}};
     private int blue = Color.rgb(51, 51, 255);
     private int cHight;
     private int cWidth;
     private float oHeigth = 14;
     private float oWidth = 14;
     private Character pacMan;
+    private Character ghost1;
+    private Character ghost2;
+    private Character ghost3;
+    private final int CAKE = 2;
+    private final int WALL = 1;
+    private int cakeCount;
+    private UpdateGameStats mainActivity;
+    private MediaPlayer sounds;
+    private boolean isPaused;
+
+    private Handler pacManHandler = new Handler();
+    private
+    Runnable pacManRunner = new Runnable() {
+        public int direction;
+
+        @Override
+        public void run()
+        {
+            direction = pacMan.getDirection();
+            if(moveCharacter(direction, pacMan))
+            {
+                pacManHandler.postDelayed(this, 70);
+            }
+        }
+    };
+    private Handler ghost1Handler = new Handler();
+    private Handler ghost2Handler = new Handler();
+    private Handler ghost3Handler = new Handler();
+    private Runnable ghost1Runner = new Runnable()
+    {
+        public int direction = 1;
+        public int count = 0;
+        Random r = new Random();
+        @Override
+        public void run()
+        {
+            if(!isPaused) {
+                boolean canMove = true;
+                if (count == 0 || count % 2 == 0) {
+                    canMove = moveCharacter(direction, ghost1);
+                }
+                if (canMove == false) {
+                    int old = direction;
+                    direction = r.nextInt(4) + 1;
+                    if (old == direction) {
+                        direction = r.nextInt(4) + 1;
+                    }
+                }
+                count++;
+                ghost1Handler.postDelayed(this, 70);
+            }
+        }
+    };
+    private Runnable ghost2Runner = new Runnable()
+    {
+        public int direction = 4;
+        public int count = 0;
+        Random r = new Random();
+        @Override
+        public void run()
+        {
+            if(!isPaused) {
+                boolean canMove = true;
+                if (count == 0 || count % 2 == 0) {
+                    canMove = moveCharacter(direction, ghost2);
+                }
+                if (canMove == false) {
+                    int old = direction;
+                    direction = r.nextInt(4) + 1;
+                    if (old == direction) {
+                        direction = r.nextInt(4) + 1;
+                    }
+                }
+                count++;
+                ghost1Handler.postDelayed(this, 70);
+            }
+        }
+    };
+    private Runnable ghost3Runner = new Runnable()
+    {
+        public int direction = 3;
+        public int count = 0;
+        Random r = new Random();
+        @Override
+        public void run()
+        {
+            if(!isPaused) {
+                boolean canMove = true;
+                if (count == 0 || count % 2 == 0) {
+                    canMove = moveCharacter(direction, ghost3);
+                }
+                if (canMove == false) {
+                    int old = direction;
+                    direction = r.nextInt(4) + 1;
+                    if (old == direction) {
+                        direction = r.nextInt(4) + 1;
+                    }
+                }
+                count++;
+                ghost1Handler.postDelayed(this, 70);
+            }
+        }
+    };
 
     public Maze(Context context)
     {
         super(context);
-        createGameCharacter(0, 0, Color.rgb(255,255,0));
+        setUp();
     }
 
     public Maze(Context context, AttributeSet attrs)
     {
         super(context, attrs);
-        createGameCharacter(0, 0, Color.rgb(255,255,0));
+        setUp();
     }
 
     public Maze(Context context, AttributeSet attrs, int defStyleAttr)
     {
         super(context, attrs, defStyleAttr);
-        createGameCharacter(0, 0, Color.rgb(255,255,0));
+        setUp();
     }
 
-    private void createGameCharacter(int col, int row, int color)
+    public void setUp()
     {
-        this.pacMan = new Character(col, row, color);
+        this.mainActivity = (UpdateGameStats)getContext();
+        this.pacMan = new Character(0, 0, Color.rgb(255, 255, 0), "player");
+        this.ghost1 = new Character(13, 13, Color.RED, "ghost");
+        this.ghost2 = new Character(5, 13, Color.RED, "ghost");
+        this.ghost3 = new Character(13, 3, Color.RED, "ghost");
+        countCakes();
+        setOnClickListener(this);
+        this.isPaused = true;
     }
 
-    public void moveCharacter(int direction)
+    private boolean moveCharacter(int direction, Character mover)
     {
         switch (direction)
         {
             case 1:
-                moveUp();
-                break;
+                return moveUp(mover);
             case 2:
-                moveDown();
-                break;
+                return moveDown(mover);
             case 3:
-                moveRight();
-                break;
+                return moveRight(mover);
             case 4:
-                moveLeft();
-                break;
+                return moveLeft(mover);
+        }
+        return false;
+    }
+
+    public void userMove(int direction)
+    {
+        if(!isPaused)
+        {
+            this.pacMan.setDirection(direction);
+            this.pacManRunner.run();
+        }
+        else
+        {
+            Toast.makeText(getContext(), "The game is currently paused, please tap the game board to start", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void moveLeft()
+    private boolean moveLeft(Character character)
     {
-        int i = this.pacMan.getCurCol();
-        int j = this.pacMan.getCurRow();
+        int i = character.getCurCol();
+        int j = character.getCurRow();
 
         if(j-1 >= 0 && this.maze[i][j-1] != 1)
         {
-            this.pacMan.setCurRow(j-1);
-            this.maze[i][j-1] = 0;
+            character.setCurRow(j - 1);
+            character.setCurRowPosition(j - 1);
+            if(character.getType().equals("player") && this.maze[i][j-1] != 0)
+            {
+                this.maze[i][j-1] = 0;
+                this.cakeCount--;
+                playSound();
+            }
+            if(crossedGhost(character, i, j))
+            {
+                gameEnds();
+            }
             invalidate();
         }
+        if(character.getDirection() != 4)
+        {
+            return false;
+        }
+        if((j-2 >= 0 && this.maze[i][j-2] != 1))
+        {
+            return true;
+        }
+        return false;
     }
 
-    private void moveRight()
+    private boolean moveRight(Character character)
     {
-        int i = this.pacMan.getCurCol();
-        int j = this.pacMan.getCurRow();
+        int i = character.getCurCol();
+        int j = character.getCurRow();
 
         if(j+1 < this.maze[0].length && this.maze[i][j+1] != 1)
         {
-            this.pacMan.setCurRow(j+1);
-            this.maze[i][j+1] = 0;
+            character.setCurRow(j + 1);
+            character.setCurRowPosition(j + 1);
+            if(character.getType().equals("player") && this.maze[i][j+1] != 0)
+            {
+                this.maze[i][j+1] = 0;
+                this.cakeCount--;
+                playSound();
+            }
+            if(crossedGhost(character, i, j))
+            {
+                gameEnds();
+            }
             invalidate();
         }
-    }
-
-    private void moveDown()
-    {
-        int i = this.pacMan.getCurCol();
-        int j = this.pacMan.getCurRow();
-
-        while(i+1 < this.maze.length && this.maze[i+1][j] != 1)
+        if(character.getDirection() != 3)
         {
-            this.pacMan.setCurCol(i+1);
-            this.maze[i+1][j] = 0;
-            invalidate();
-            i++;
+            return false;
         }
+        if((j+2 < this.maze.length && this.maze[i][j+2] != 1))
+        {
+            return true;
+        }
+        return false;
     }
 
-    private void moveUp()
+    private boolean moveDown(Character character)
     {
-        int i = this.pacMan.getCurCol();
-        int j = this.pacMan.getCurRow();
+        int i = character.getCurCol();
+        int j = character.getCurRow();
+
+        if(i+1 < this.maze.length && this.maze[i+1][j] != 1 && character.getDirection() == 2)
+        {
+            character.setCurCol(i + 1);
+            character.setCurColPosition(i + 1);
+            if(character.getType().equals("player") && this.maze[i+1][j] != 0)
+            {
+                this.maze[i + 1][j] = 0;
+                this.cakeCount--;
+                playSound();
+            }
+            if(crossedGhost(character, i, j))
+            {
+                gameEnds();
+            }
+            invalidate();
+        }
+        if(character.getDirection() != 2)
+        {
+            return false;
+        }
+        if((i+2 < this.maze.length && this.maze[i+2][j] != 1))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean moveUp(Character character) {
+        int i = character.getCurCol();
+        int j = character.getCurRow();
         if(i-1 >= 0 && this.maze[i-1][j] !=1)
         {
-            this.pacMan.setCurCol(i-1);
-            this.maze[i-1][j] = 0;
+            character.setCurCol(i - 1);
+            character.setCurColPosition(i - 1);
+            if(character.getType().equals("player") && this.maze[i-1][j] != 0)
+            {
+                this.maze[i - 1][j] = 0;
+                this.cakeCount--;
+                playSound();
+            }
+            if(crossedGhost(character, i, j))
+            {
+                gameEnds();
+            }
             invalidate();
         }
+        if(character.getDirection() != 1)
+        {
+            return false;
+        }
+        if((i-2 >= 0 && this.maze[i-2][j] != 1))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean crossedGhost(Character character, int i, int j)
+    {
+        if(character.getType().equals("ghost") && this.pacMan.checkLocation(i, j))
+        {
+            return true;
+        }
+        else if(character.getType().equals("player"))
+        {
+            if(this.ghost1.checkLocation(i, j) && this.ghost2.checkLocation(i, j) && this.ghost3.checkLocation(i, j))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void playSound()
+    {
+        if(this.sounds == null)
+        {
+            this.sounds = MediaPlayer.create(getContext(), R.raw.eating);
+            this.sounds.setOnCompletionListener(this);
+            this.sounds.start();
+        }
+        else
+        {
+            this.sounds.pause();
+            this.sounds.seekTo(0);
+            this.sounds.start();
+        }
+    }
+
+    private void gameEnds()
+    {
+        this.isPaused = true;
+        this.pacManHandler.removeCallbacksAndMessages(this.pacManRunner);
+        this.ghost1Handler.removeCallbacksAndMessages(this.ghost1Runner);
+        this.ghost2Handler.removeCallbacksAndMessages(this.ghost2Runner);
+        this.ghost3Handler.removeCallbacksAndMessages(this.ghost3Runner);
+        Toast.makeText(getContext(), "You lost the game", Toast.LENGTH_SHORT).show();
+        resetGame();
+    }
+
+    private void resetGame()
+    {
+        this.pacMan.setPosition(0,0);
+        this.ghost1.setPosition(13, 13);
+        this.ghost2.setPosition(5, 13);
+        this.ghost3.setPosition(13, 3);
+        invalidate();
+        countCakes();
     }
 
 
     @Override
-    protected void onSizeChanged(int w, int h, int odlw, int oldh)
-    {
+    protected void onSizeChanged(int w, int h, int odlw, int oldh) {
         super.onSizeChanged(w, h, odlw, oldh);
         this.cHight = h;
         this.cWidth = w;
@@ -169,6 +405,29 @@ public class Maze extends View
         setMeasuredDimension(size, size);
     }
 
+    private void countCakes()
+    {
+        this.cakeCount = 0;
+        for(int i = 0; i < this.maze.length; i++)
+        {
+            for(int j = 0; j < this.maze[0].length; j++)
+            {
+                if(this.maze[i][j] == 0)
+                {
+                    this.maze[i][j] = CAKE;
+                }
+                if(this.maze[i][j] == CAKE)
+                {
+                    this.cakeCount++;
+                }
+            }
+        }
+        if(this.isPaused)
+        {
+            invalidate();
+        }
+    }
+
     public void onDraw(Canvas c)
     {
         super.onDraw(c);
@@ -176,27 +435,30 @@ public class Maze extends View
         float hScale = cHight/(float)this.oHeigth;
         c.scale(wScale, hScale);
         c.drawColor(blue);
+        this.pacMan.drawCharacter(c);
+
         Path square = new Path();
         Paint p = new Paint();
-        p.setColor(this.pacMan.getColor());
-        c.drawCircle(this.pacMan.getCurRow()+.5f, this.pacMan.getCurCol()+.5f, .5f, p);
         p.setColor(Color.WHITE);
 
         for(int i = 0; i < this.maze.length; i++)
         {
             for(int j = 0; j < this.maze[0].length; j++)
             {
-                if(this.maze[i][j] == 2)
+                if(this.maze[i][j] == CAKE)
                 {
                     c.drawCircle(j+.5f, i+0.5f, .25f, p);
                 }
             }
         }
+        this.ghost1.drawCharacter(c);
+        this.ghost2.drawCharacter(c);
+        this.ghost3.drawCharacter(c);
         for(int i = 0; i < this.maze.length; i++)
         {
             for(int j = 0; j < this.maze[0].length; j++)
             {
-                if (this.maze[i][j] == 1)
+                if (this.maze[i][j] == WALL)
                 {
                     square.moveTo(j, i);
                     square.lineTo(j + 1, i);
@@ -208,5 +470,23 @@ public class Maze extends View
                 }
             }
         }
+        this.mainActivity.updateCakeCount(this.cakeCount);
+    }
+
+
+    @Override
+    public void onClick(View v)
+    {
+        this.isPaused = false;
+        this.ghost1Runner.run();
+        this.ghost2Runner.run();
+        this.ghost3Runner.run();
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mp)
+    {
+        this.sounds.release();
+        this.sounds = null;
     }
 }

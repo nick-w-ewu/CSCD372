@@ -56,4 +56,38 @@
         android:layout_toLeftOf="@+id/up"
         android:layout_toStartOf="@+id/up"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/directions"
+        android:id="@+id/instructions"
+        android:layout_below="@+id/mazeView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/left"
+        android:layout_toStartOf="@+id/left"
+        android:textSize="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Cakes Left = "
+        android:id="@+id/cakeInfo"
+        android:layout_alignBottom="@+id/left"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textSize="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="0"
+        android:id="@+id/cakeCount"
+        android:layout_alignTop="@+id/cakeInfo"
+        android:layout_toRightOf="@+id/cakeInfo"
+        android:layout_toEndOf="@+id/cakeInfo" />
+
 </RelativeLayout>
