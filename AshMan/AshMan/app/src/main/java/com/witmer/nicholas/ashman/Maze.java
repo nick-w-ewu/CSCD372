@@ -257,7 +257,10 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
 
     public void setUp()
     {
-        this.mainActivity = (UpdateGameStats)getContext();
+        if(!isInEditMode())
+        {
+            this.mainActivity = (UpdateGameStats) getContext();
+        }
         this.pacMan = new Character(0, 0, Color.rgb(255, 255, 0), "player");
         this.ghost1 = new Character(13, 13, Color.RED, "ghost");
         this.ghost2 = new Character(5, 13, Color.RED, "ghost");
@@ -463,7 +466,7 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
 
     private void removeCake(Character character, int i, int j)
     {
-        if(character.getType().equals("player") && this.maze[i][j] != 0)
+        if(character.getType().equals("player") && this.maze[i][j] > 0)
         {
             this.maze[i][j] = 0;
             this.cakeCount--;
@@ -499,6 +502,7 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
         if(this.lost)
         {
             Toast.makeText(getContext(), "You lost the game", Toast.LENGTH_SHORT).show();
+            this.level = 1;
             resetGame();
         }
         else
@@ -531,6 +535,10 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
 
     private void resetGame()
     {
+        if(!this.lost)
+        {
+            Toast.makeText(getContext(), "Tap on the gameboard to start level " + this.level, Toast.LENGTH_SHORT).show();
+        }
         if(this.level == 1)
         {
             this.pacMan.setPosition(0, 0);
@@ -603,47 +611,51 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
         float hScale = cHight/(float)this.oHeigth;
         c.scale(wScale, hScale);
         c.drawColor(blue);
-        this.pacMan.drawCharacter(c);
-
-        Path square = new Path();
-        Paint p = new Paint();
-        p.setColor(Color.WHITE);
-
-        for(int i = 0; i < this.maze.length; i++)
+        if(!isInEditMode())
         {
-            for(int j = 0; j < this.maze[0].length; j++)
+            this.pacMan.drawCharacter(c);
+
+            Path square = new Path();
+            Paint p = new Paint();
+            p.setColor(Color.WHITE);
+
+            for(int i = 0; i < this.maze.length; i++)
             {
-                if(this.maze[i][j] == CAKE)
+                for(int j = 0; j < this.maze[0].length; j++)
                 {
-                    c.drawCircle(j+.5f, i+0.5f, .25f, p);
+                    if(this.maze[i][j] == CAKE)
+                    {
+                        c.drawCircle(j+.5f, i+0.5f, .25f, p);
+                    }
                 }
             }
-        }
-        this.ghost1.drawCharacter(c);
-        this.ghost2.drawCharacter(c);
-        this.ghost3.drawCharacter(c);
-        if(level == 2 && ghost4 != null && ghost5 != null)
-        {
-            this.ghost4.drawCharacter(c);
-            this.ghost5.drawCharacter(c);
-        }
-        for(int i = 0; i < this.maze.length; i++)
-        {
-            for(int j = 0; j < this.maze[0].length; j++)
+            this.ghost1.drawCharacter(c);
+            this.ghost2.drawCharacter(c);
+            this.ghost3.drawCharacter(c);
+            if(level == 2 && ghost4 != null && ghost5 != null)
             {
-                if (this.maze[i][j] == WALL)
+                this.ghost4.drawCharacter(c);
+                this.ghost5.drawCharacter(c);
+            }
+            for(int i = 0; i < this.maze.length; i++)
+            {
+                for(int j = 0; j < this.maze[0].length; j++)
                 {
-                    square.moveTo(j, i);
-                    square.lineTo(j + 1, i);
-                    square.lineTo(j + 1, i + 1);
-                    square.lineTo( j, i + 1);
-                    square.close();
-                    c.clipPath(square, Region.Op.REPLACE);
-                    c.drawColor(Color.BLACK);
+                    if (this.maze[i][j] == WALL)
+                    {
+                        square.moveTo(j, i);
+                        square.lineTo(j + 1, i);
+                        square.lineTo(j + 1, i + 1);
+                        square.lineTo( j, i + 1);
+                        square.close();
+                        c.clipPath(square, Region.Op.REPLACE);
+                        c.drawColor(Color.BLACK);
+                    }
                 }
             }
+            this.mainActivity.updateCakeCount(this.cakeCount);
+            this.mainActivity.updateLevel(this.level);
         }
-        this.mainActivity.updateCakeCount(this.cakeCount);
     }
 
 

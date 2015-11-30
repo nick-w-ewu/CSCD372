@@ -58,7 +58,7 @@
 
     <TextView
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/directions"
         android:id="@+id/instructions"
@@ -75,10 +75,10 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Cakes Left = "
         android:id="@+id/cakeInfo"
-        android:layout_alignBottom="@+id/left"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:textSize="20dp" />
+        android:textSize="20dp"
+        android:layout_alignBottom="@+id/left" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -89,5 +89,26 @@
         android:layout_alignTop="@+id/cakeInfo"
         android:layout_toRightOf="@+id/cakeInfo"
         android:layout_toEndOf="@+id/cakeInfo" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Level = "
+        android:id="@+id/levelText"
+        android:textSize="20dp"
+        android:layout_below="@+id/cakeInfo"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="0"
+        android:id="@+id/levels"
+        android:layout_alignTop="@+id/levelText"
+        android:layout_toRightOf="@+id/levelText"
+        android:layout_toEndOf="@+id/levelText" />
 
 </RelativeLayout>

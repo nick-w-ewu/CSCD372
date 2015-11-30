@@ -6,4 +6,5 @@ package com.witmer.nicholas.ashman;
 public interface UpdateGameStats
 {
     public void updateCakeCount(int cakes);
+    public void updateLevel(int level);
 }
