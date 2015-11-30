@@ -271,6 +271,11 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
         this.level = 1;
     }
 
+    public void setPaused()
+    {
+        this.isPaused = true;
+    }
+
     private int generateDirection(Character character)
     {
         int i = character.getCurCol();
@@ -346,7 +351,6 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
         if(j-1 >= 0 && this.maze[i][j-1] != 1)
         {
             character.setCurRow(j - 1);
-            character.setCurRowPosition(j - 1);
             removeCake(character, i, j-1);
             if(crossedGhost(character, i, j))
             {
@@ -374,7 +378,6 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
         if(j+1 < this.maze[0].length && this.maze[i][j+1] != 1)
         {
             character.setCurRow(j + 1);
-            character.setCurRowPosition(j + 1);
             removeCake(character, i, j+1);
             if(crossedGhost(character, i, j))
             {
@@ -402,7 +405,6 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
         if(i+1 < this.maze.length && this.maze[i+1][j] != 1 && character.getDirection() == 2)
         {
             character.setCurCol(i + 1);
-            character.setCurColPosition(i + 1);
             removeCake(character, i+1, j);
             if(crossedGhost(character, i, j))
             {
@@ -428,7 +430,6 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
         if(i-1 >= 0 && this.maze[i-1][j] !=1)
         {
             character.setCurCol(i - 1);
-            character.setCurColPosition(i - 1);
             removeCake(character, i-1, j);
             if(crossedGhost(character, i, j))
             {
@@ -520,7 +521,7 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
         }
     }
 
-    private void stopAllCharacters()
+    public void stopAllCharacters()
     {
         this.pacManHandler.removeCallbacksAndMessages(this.pacManRunner);
         this.ghost1Handler.removeCallbacksAndMessages(this.ghost1Runner);

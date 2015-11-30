@@ -2,6 +2,7 @@ package com.witmer.nicholas.ashman;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.os.Bundle;
 
 /**
  * Created by nicho on 11/16/2015.
@@ -10,8 +11,6 @@ public class Character
 {
     private int curCol;
     private int curRow;
-    private float curColPosition;
-    private float curRowPosition;
     private int color;
     private float size;
     private int direction;
@@ -21,11 +20,30 @@ public class Character
     {
         this.curCol = col;
         this.curRow = row;
-        this.curColPosition = col;
-        this.curRowPosition = row;
         this.color = color;
         this.size = .5f;
         this.type = type;
+    }
+
+    public Bundle bundleCharacter()
+    {
+        Bundle b = new Bundle();
+        b.putInt("col", this.curCol);
+        b.putInt("row", this.curRow);
+        b.putInt("direction", this.direction);
+        b.putInt("color", this.color);
+        b.putString("type", this.type);
+        return b;
+    }
+
+    public Character(Bundle b)
+    {
+        this.curCol = b.getInt("col");
+        this.curRow = b.getInt("row");
+        this.color = b.getInt("color");
+        this.direction = b.getInt("direction");
+        this.type = b.getString("type");
+        this.size = .5f;
     }
 
     public int getCurCol()
@@ -49,26 +67,6 @@ public class Character
         this.curRow = curRow;
     }
 
-    public float getCurColPosition()
-    {
-        return curColPosition;
-    }
-
-    public void setCurColPosition(float curColPosition)
-    {
-        this.curColPosition = curColPosition;
-    }
-
-    public float getCurRowPosition()
-    {
-        return curRowPosition;
-    }
-
-    public void setCurRowPosition(float curRowPosition)
-    {
-        this.curRowPosition = curRowPosition;
-    }
-
     public int getDirection() {
         return direction;
     }
@@ -85,22 +83,6 @@ public class Character
         this.type = type;
     }
 
-    public void moveOneStep()
-    {
-        switch (direction)
-        {
-            case 1:
-                this.curRowPosition+=.25f;
-            case 2:
-
-                this.curRowPosition-=.25f;
-            case 3:
-                this.curColPosition+=.25f;
-            case 4:
-                this.curColPosition+=.25f;
-        }
-    }
-
     public boolean checkLocation(int i, int j)
     {
         if(this.curCol == i && this.curRow == j)
@@ -110,20 +92,16 @@ public class Character
         return false;
     }
 
-
     public void setPosition(int col, int row)
     {
         this.curCol = col;
         this.curRow = row;
-        this.curColPosition = col;
-        this.curRowPosition = row;
     }
-
 
     public void drawCharacter(Canvas c)
     {
         Paint p = new Paint();
         p.setColor(this.color);
-        c.drawCircle(this.curRowPosition+.5f, this.curColPosition+.5f, this.size, p);
+        c.drawCircle(this.curRow+.5f, this.curCol+.5f, this.size, p);
     }
 }

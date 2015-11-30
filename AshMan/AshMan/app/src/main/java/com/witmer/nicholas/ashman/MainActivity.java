@@ -84,6 +84,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    protected void onPause()
+    {
+        super.onPause();
+        this.maze.stopAllCharacters();
+        this.maze.setPaused();
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        Toast.makeText(this, "The game was paused, please tap on the game board to resume", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
     public void updateCakeCount(int cakes)
     {
         cakeCount.setText(String.valueOf(cakes));
