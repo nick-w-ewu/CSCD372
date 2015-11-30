@@ -13,7 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, UpdateGameStats
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, UpdateGameStats, View.OnLongClickListener
 {
 
     Maze maze;
@@ -29,6 +29,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ImageView down = (ImageView)findViewById(R.id.down);
         ImageView left = (ImageView)findViewById(R.id.left);
         ImageView right = (ImageView)findViewById(R.id.right);
+        TextView instructions = (TextView)findViewById(R.id.instructions);
+        instructions.setOnLongClickListener(this);
         maze = (Maze)findViewById(R.id.mazeView);
         cakeCount = (TextView)findViewById(R.id.cakeCount);
         up.setTag(1);
@@ -83,5 +85,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void updateCakeCount(int cakes)
     {
         cakeCount.setText(String.valueOf(cakes));
+    }
+
+    @Override
+    public boolean onLongClick(View v)
+    {
+        this.maze.cheat();
+        return true;
     }
 }

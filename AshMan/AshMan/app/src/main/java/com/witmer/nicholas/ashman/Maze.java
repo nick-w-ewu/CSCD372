@@ -44,13 +44,16 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
     private Character ghost1;
     private Character ghost2;
     private Character ghost3;
+    private Character ghost4;
+    private Character ghost5;
     private final int CAKE = 2;
     private final int WALL = 1;
     private int cakeCount;
     private UpdateGameStats mainActivity;
     private MediaPlayer sounds;
     private boolean isPaused;
-
+    private boolean lost;
+    private int level;
     private Handler pacManHandler = new Handler();
     private
     Runnable pacManRunner = new Runnable() {
@@ -60,7 +63,7 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
         public void run()
         {
             direction = pacMan.getDirection();
-            if(moveCharacter(direction, pacMan))
+            if(!isPaused && moveCharacter(direction, pacMan))
             {
                 pacManHandler.postDelayed(this, 70);
             }
@@ -69,6 +72,8 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
     private Handler ghost1Handler = new Handler();
     private Handler ghost2Handler = new Handler();
     private Handler ghost3Handler = new Handler();
+    private Handler ghost4Handler = new Handler();
+    private Handler ghost5Handler = new Handler();
     private Runnable ghost1Runner = new Runnable()
     {
         public int direction = 1;
@@ -79,7 +84,15 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
         {
             if(!isPaused) {
                 boolean canMove = true;
-                if (count == 0 || count % 2 == 0) {
+                if(level == 1)
+                {
+                    if (count == 0 || count % 2 == 0)
+                    {
+                        canMove = moveCharacter(direction, ghost1);
+                    }
+                }
+                else
+                {
                     canMove = moveCharacter(direction, ghost1);
                 }
                 if (canMove == false) {
@@ -104,7 +117,15 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
         {
             if(!isPaused) {
                 boolean canMove = true;
-                if (count == 0 || count % 2 == 0) {
+                if(level == 1)
+                {
+                    if (count == 0 || count % 2 == 0)
+                    {
+                        canMove = moveCharacter(direction, ghost2);
+                    }
+                }
+                else
+                {
                     canMove = moveCharacter(direction, ghost2);
                 }
                 if (canMove == false) {
@@ -129,7 +150,15 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
         {
             if(!isPaused) {
                 boolean canMove = true;
-                if (count == 0 || count % 2 == 0) {
+                if(level == 1)
+                {
+                    if (count == 0 || count % 2 == 0)
+                    {
+                        canMove = moveCharacter(direction, ghost3);
+                    }
+                }
+                else
+                {
                     canMove = moveCharacter(direction, ghost3);
                 }
                 if (canMove == false) {
@@ -141,6 +170,52 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
                 }
                 count++;
                 ghost1Handler.postDelayed(this, 70);
+            }
+        }
+    };
+    private Runnable ghost4Runner = new Runnable()
+    {
+        public int direction = 1;
+        public int count = 0;
+        Random r = new Random();
+        @Override
+        public void run()
+        {
+            if(!isPaused) {
+                boolean canMove = true;
+                canMove = moveCharacter(direction, ghost4);
+                if (canMove == false) {
+                    int old = direction;
+                    direction = r.nextInt(4) + 1;
+                    if (old == direction) {
+                        direction = r.nextInt(4) + 1;
+                    }
+                }
+                count++;
+                ghost4Handler.postDelayed(this, 70);
+            }
+        }
+    };
+    private Runnable ghost5Runner = new Runnable()
+    {
+        public int direction = 1;
+        public int count = 0;
+        Random r = new Random();
+        @Override
+        public void run()
+        {
+            if(!isPaused) {
+                boolean canMove = true;
+                canMove = moveCharacter(direction, ghost5);
+                if (canMove == false) {
+                    int old = direction;
+                    direction = r.nextInt(4) + 1;
+                    if (old == direction) {
+                        direction = r.nextInt(4) + 1;
+                    }
+                }
+                count++;
+                ghost5Handler.postDelayed(this, 70);
             }
         }
     };
@@ -163,6 +238,23 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
         setUp();
     }
 
+    public void cheat()
+    {
+        for(int i = 0; i < this.maze.length; i++)
+        {
+            for(int j = 0; j < this.maze[0].length; j++)
+            {
+                if(this.maze[i][j] == CAKE)
+                {
+                    this.maze[i][j] = 0;;
+                }
+            }
+        }
+        this.maze[2][1] = CAKE;
+        this.cakeCount = 1;
+        invalidate();
+    }
+
     public void setUp()
     {
         this.mainActivity = (UpdateGameStats)getContext();
@@ -173,6 +265,45 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
         countCakes();
         setOnClickListener(this);
         this.isPaused = true;
+        this.level = 1;
+    }
+
+    private int generateDirection(Character character)
+    {
+        int i = character.getCurCol();
+        int j = character.getCurRow();
+        Random r = new Random();
+        int direction = r.nextInt(4) + 1;
+        while(true)
+        {
+            switch (direction)
+            {
+                case 1:
+                    if(i-1 >= 0 && this.maze[i-1][j] != WALL)
+                    {
+                        return direction;
+                    }
+                    direction = r.nextInt(4) + 1;
+                case 2:
+                    if(i+1 > this.maze.length && this.maze[i+1][j] != WALL)
+                    {
+                        return direction;
+                    }
+                    direction = r.nextInt(4) + 1;
+                case 3:
+                    if(j+1 < this.maze.length && this.maze[i][j+1] != WALL)
+                    {
+                        return direction;
+                    }
+                    direction = r.nextInt(4) + 1;
+                case 4:
+                    if(j-1 >= 0 && this.maze[i][j-1] != WALL)
+                    {
+                        return direction;
+                    }
+                    direction = r.nextInt(4) + 1;
+            }
+        }
     }
 
     private boolean moveCharacter(int direction, Character mover)
@@ -213,14 +344,10 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
         {
             character.setCurRow(j - 1);
             character.setCurRowPosition(j - 1);
-            if(character.getType().equals("player") && this.maze[i][j-1] != 0)
-            {
-                this.maze[i][j-1] = 0;
-                this.cakeCount--;
-                playSound();
-            }
+            removeCake(character, i, j-1);
             if(crossedGhost(character, i, j))
             {
+                this.lost = true;
                 gameEnds();
             }
             invalidate();
@@ -245,14 +372,10 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
         {
             character.setCurRow(j + 1);
             character.setCurRowPosition(j + 1);
-            if(character.getType().equals("player") && this.maze[i][j+1] != 0)
-            {
-                this.maze[i][j+1] = 0;
-                this.cakeCount--;
-                playSound();
-            }
+            removeCake(character, i, j+1);
             if(crossedGhost(character, i, j))
             {
+                this.lost = true;
                 gameEnds();
             }
             invalidate();
@@ -277,14 +400,10 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
         {
             character.setCurCol(i + 1);
             character.setCurColPosition(i + 1);
-            if(character.getType().equals("player") && this.maze[i+1][j] != 0)
-            {
-                this.maze[i + 1][j] = 0;
-                this.cakeCount--;
-                playSound();
-            }
+            removeCake(character, i+1, j);
             if(crossedGhost(character, i, j))
             {
+                this.lost = true;
                 gameEnds();
             }
             invalidate();
@@ -307,14 +426,10 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
         {
             character.setCurCol(i - 1);
             character.setCurColPosition(i - 1);
-            if(character.getType().equals("player") && this.maze[i-1][j] != 0)
-            {
-                this.maze[i - 1][j] = 0;
-                this.cakeCount--;
-                playSound();
-            }
+            removeCake(character, i-1, j);
             if(crossedGhost(character, i, j))
             {
+                this.lost = true;
                 gameEnds();
             }
             invalidate();
@@ -346,6 +461,21 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
         return false;
     }
 
+    private void removeCake(Character character, int i, int j)
+    {
+        if(character.getType().equals("player") && this.maze[i][j] != 0)
+        {
+            this.maze[i][j] = 0;
+            this.cakeCount--;
+            playSound();
+        }
+        if(this.cakeCount == 0)
+        {
+            this.lost = false;
+            gameEnds();
+        }
+    }
+
     private void playSound()
     {
         if(this.sounds == null)
@@ -365,20 +495,58 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
     private void gameEnds()
     {
         this.isPaused = true;
+        stopAllCharacters();
+        if(this.lost)
+        {
+            Toast.makeText(getContext(), "You lost the game", Toast.LENGTH_SHORT).show();
+            resetGame();
+        }
+        else
+        {
+            Toast.makeText(getContext(), "You won level " + this.level, Toast.LENGTH_SHORT).show();
+            if(level == 2)
+            {
+                level = 1;
+            }
+            else
+            {
+                this.level = 2;
+            }
+            resetGame();
+        }
+    }
+
+    private void stopAllCharacters()
+    {
         this.pacManHandler.removeCallbacksAndMessages(this.pacManRunner);
         this.ghost1Handler.removeCallbacksAndMessages(this.ghost1Runner);
         this.ghost2Handler.removeCallbacksAndMessages(this.ghost2Runner);
         this.ghost3Handler.removeCallbacksAndMessages(this.ghost3Runner);
-        Toast.makeText(getContext(), "You lost the game", Toast.LENGTH_SHORT).show();
-        resetGame();
+        if(this.level == 2)
+        {
+            this.ghost3Handler.removeCallbacksAndMessages(this.ghost4Runner);
+            this.ghost3Handler.removeCallbacksAndMessages(this.ghost4Runner);
+        }
     }
 
     private void resetGame()
     {
-        this.pacMan.setPosition(0,0);
-        this.ghost1.setPosition(13, 13);
-        this.ghost2.setPosition(5, 13);
-        this.ghost3.setPosition(13, 3);
+        if(this.level == 1)
+        {
+            this.pacMan.setPosition(0, 0);
+            this.ghost1.setPosition(13, 13);
+            this.ghost2.setPosition(5, 13);
+            this.ghost3.setPosition(13, 3);
+        }
+        else
+        {
+            this.pacMan.setPosition(0, 0);
+            this.ghost1.setPosition(13, 13);
+            this.ghost2.setPosition(5, 13);
+            this.ghost3.setPosition(13, 3);
+            this.ghost4 = new Character(13, 10, Color.RED, "ghost");
+            this.ghost5 = new Character(5, 4, Color.RED, "ghost");
+        }
         invalidate();
         countCakes();
     }
@@ -454,6 +622,11 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
         this.ghost1.drawCharacter(c);
         this.ghost2.drawCharacter(c);
         this.ghost3.drawCharacter(c);
+        if(level == 2 && ghost4 != null && ghost5 != null)
+        {
+            this.ghost4.drawCharacter(c);
+            this.ghost5.drawCharacter(c);
+        }
         for(int i = 0; i < this.maze.length; i++)
         {
             for(int j = 0; j < this.maze[0].length; j++)
@@ -477,10 +650,23 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
     @Override
     public void onClick(View v)
     {
-        this.isPaused = false;
-        this.ghost1Runner.run();
-        this.ghost2Runner.run();
-        this.ghost3Runner.run();
+        if(isPaused)
+        {
+            this.isPaused = false;
+            this.ghost1Runner.run();
+            this.ghost2Runner.run();
+            this.ghost3Runner.run();
+            if (this.level == 2)
+            {
+                this.ghost4Runner.run();
+                this.ghost5Runner.run();
+            }
+        }
+        else
+        {
+            stopAllCharacters();
+            this.isPaused = true;
+        }
     }
 
     @Override
