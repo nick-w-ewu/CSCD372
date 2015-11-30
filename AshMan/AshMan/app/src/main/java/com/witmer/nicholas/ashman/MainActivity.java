@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     Maze maze;
     TextView cakeCount;
+    TextView level;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         instructions.setOnLongClickListener(this);
         maze = (Maze)findViewById(R.id.mazeView);
         cakeCount = (TextView)findViewById(R.id.cakeCount);
+        level = (TextView)findViewById(R.id.levels);
         up.setTag(1);
         down.setTag(2);
         right.setTag(3);
@@ -85,6 +87,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void updateCakeCount(int cakes)
     {
         cakeCount.setText(String.valueOf(cakes));
+    }
+
+    @Override
+    public void updateLevel(int level)
+    {
+        this.level.setText(String.valueOf(level));
     }
 
     @Override
