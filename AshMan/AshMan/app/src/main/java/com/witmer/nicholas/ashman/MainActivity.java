@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Maze maze;
     TextView cakeCount;
     TextView level;
+    boolean firstStart;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         maze = (Maze)findViewById(R.id.mazeView);
         cakeCount = (TextView)findViewById(R.id.cakeCount);
         level = (TextView)findViewById(R.id.levels);
+        this.firstStart = true;
         up.setTag(1);
         down.setTag(2);
         right.setTag(3);
@@ -89,13 +91,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onPause();
         this.maze.stopAllCharacters();
         this.maze.setPaused();
+        this.firstStart = false;
     }
 
     @Override
     protected void onResume()
     {
         super.onResume();
-        Toast.makeText(this, "The game was paused, please tap on the game board to resume", Toast.LENGTH_SHORT).show();
+        if(!firstStart)
+        {
+            Toast.makeText(this, "The game was paused, please tap on the game board to resume", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

@@ -504,11 +504,15 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
         {
             Toast.makeText(getContext(), "You lost the game", Toast.LENGTH_SHORT).show();
             this.level = 1;
+            MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.death);
+            mp.start();
             resetGame();
         }
         else
         {
             Toast.makeText(getContext(), "You won level " + this.level, Toast.LENGTH_SHORT).show();
+            MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.intermission);
+            mp.start();
             if(level == 2)
             {
                 level = 1;
