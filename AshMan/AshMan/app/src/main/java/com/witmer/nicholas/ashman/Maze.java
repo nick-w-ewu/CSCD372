@@ -7,7 +7,9 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Region;
 import android.media.MediaPlayer;
+import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Toast;
@@ -54,6 +56,7 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
     private boolean isPaused;
     private boolean lost;
     private int level;
+    Random r = new Random();
     private Handler pacManHandler = new Handler();
     private
     Runnable pacManRunner = new Runnable() {
@@ -78,7 +81,6 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
     {
         public int direction = 1;
         public int count = 0;
-        Random r = new Random();
         @Override
         public void run()
         {
@@ -98,9 +100,11 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
                 if (canMove == false) {
                     int old = direction;
                     direction = r.nextInt(4) + 1;
-                    if (old == direction) {
+                    if(direction == old)
+                    {
                         direction = r.nextInt(4) + 1;
                     }
+
                 }
                 count++;
                 ghost1Handler.postDelayed(this, 70);
@@ -111,7 +115,6 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
     {
         public int direction = 4;
         public int count = 0;
-        Random r = new Random();
         @Override
         public void run()
         {
@@ -131,9 +134,11 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
                 if (canMove == false) {
                     int old = direction;
                     direction = r.nextInt(4) + 1;
-                    if (old == direction) {
+                    if(direction == old)
+                    {
                         direction = r.nextInt(4) + 1;
                     }
+
                 }
                 count++;
                 ghost1Handler.postDelayed(this, 70);
@@ -144,7 +149,7 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
     {
         public int direction = 3;
         public int count = 0;
-        Random r = new Random();
+
         @Override
         public void run()
         {
@@ -164,7 +169,8 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
                 if (canMove == false) {
                     int old = direction;
                     direction = r.nextInt(4) + 1;
-                    if (old == direction) {
+                    if(direction == old)
+                    {
                         direction = r.nextInt(4) + 1;
                     }
                 }
@@ -177,7 +183,6 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
     {
         public int direction = 1;
         public int count = 0;
-        Random r = new Random();
         @Override
         public void run()
         {
@@ -187,7 +192,8 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
                 if (canMove == false) {
                     int old = direction;
                     direction = r.nextInt(4) + 1;
-                    if (old == direction) {
+                    if(direction == old)
+                    {
                         direction = r.nextInt(4) + 1;
                     }
                 }
@@ -200,7 +206,6 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
     {
         public int direction = 1;
         public int count = 0;
-        Random r = new Random();
         @Override
         public void run()
         {
@@ -210,7 +215,8 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
                 if (canMove == false) {
                     int old = direction;
                     direction = r.nextInt(4) + 1;
-                    if (old == direction) {
+                    if(direction == old)
+                    {
                         direction = r.nextInt(4) + 1;
                     }
                 }
@@ -255,6 +261,37 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
         invalidate();
     }
 
+    private int getDirection(Character c)
+    {
+        int d = r.nextInt();
+        int i = c.getCurCol();
+        int j = c.getCurRow();
+        switch (d)
+        {
+            case 1:
+                if(this.maze[i-1][j] == WALL || i-1 < 0)
+                {
+                    d = r.nextInt();
+                }
+            case 2:
+                if(this.maze[i+1][j] == WALL || i+1 > this.maze.length)
+                {
+                   d = r.nextInt();
+                }
+            case 3:
+                if(this.maze[i][j+1] == WALL || j+1 >= this.maze.length)
+                {
+                    d = r.nextInt();
+                }
+            case 4:
+                if(j-1 >= 0 || this.maze[i][j-1] == WALL)
+                {
+                    d = r.nextInt();
+                }
+        }
+        return d;
+    }
+
     public void setUp()
     {
         if(!isInEditMode())
@@ -271,47 +308,62 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
         this.level = 1;
     }
 
+    @Override
+    public Parcelable onSaveInstanceState()
+    {
+        stopAllCharacters();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("instanceState", super.onSaveInstanceState());
+        bundle.putBundle("pacman", this.pacMan.bundleCharacter());
+        bundle.putBundle("ghost1", this.ghost1.bundleCharacter());
+        bundle.putBundle("ghost2", this.ghost2.bundleCharacter());
+        bundle.putBundle("ghost3", this.ghost3.bundleCharacter());
+        if(ghost4 != null && ghost5 != null)
+        {
+            bundle.putBundle("ghost4", this.ghost1.bundleCharacter());
+            bundle.putBundle("ghost5", this.ghost1.bundleCharacter());
+        }
+        bundle.putInt("level", this.level);
+        bundle.putInt("cakecount", this.cakeCount);
+        bundle.putBoolean("lost", this.lost);
+        for(int i = 0; i < this.maze.length; i++)
+        {
+            bundle.putIntArray("array"+i, this.maze[i]);
+        }
+        return bundle;
+    }
+
+    @Override
+    public void onRestoreInstanceState(Parcelable state)
+    {
+        if(state instanceof Bundle)
+        {
+            Bundle b = (Bundle)state;
+            this.level = b.getInt("level");
+            this.cakeCount = b.getInt("cakecount");
+            this.isPaused = true;
+            this.pacMan = new Character(b.getBundle("pacman"));
+            this.ghost1 = new Character(b.getBundle("ghost1"));
+            this.ghost2 = new Character(b.getBundle("ghost2"));
+            this.ghost3 = new Character(b.getBundle("ghost3"));
+            if(this.level == 2)
+            {
+                this.ghost4 = new Character(b.getBundle("ghost4"));
+                this.ghost5 = new Character(b.getBundle("ghost5"));
+            }
+            this.lost = b.getBoolean("lost");
+            for(int i = 0; i < this.maze.length; i++)
+            {
+                this.maze[i] = b.getIntArray("array"+i);
+            }
+            state = b.getParcelable("instanceState");
+        }
+        super.onRestoreInstanceState(state);
+    }
+
     public void setPaused()
     {
         this.isPaused = true;
-    }
-
-    private int generateDirection(Character character)
-    {
-        int i = character.getCurCol();
-        int j = character.getCurRow();
-        Random r = new Random();
-        int direction = r.nextInt(4) + 1;
-        while(true)
-        {
-            switch (direction)
-            {
-                case 1:
-                    if(i-1 >= 0 && this.maze[i-1][j] != WALL)
-                    {
-                        return direction;
-                    }
-                    direction = r.nextInt(4) + 1;
-                case 2:
-                    if(i+1 > this.maze.length && this.maze[i+1][j] != WALL)
-                    {
-                        return direction;
-                    }
-                    direction = r.nextInt(4) + 1;
-                case 3:
-                    if(j+1 < this.maze.length && this.maze[i][j+1] != WALL)
-                    {
-                        return direction;
-                    }
-                    direction = r.nextInt(4) + 1;
-                case 4:
-                    if(j-1 >= 0 && this.maze[i][j-1] != WALL)
-                    {
-                        return direction;
-                    }
-                    direction = r.nextInt(4) + 1;
-            }
-        }
     }
 
     private boolean moveCharacter(int direction, Character mover)
@@ -348,7 +400,7 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
         int i = character.getCurCol();
         int j = character.getCurRow();
 
-        if(j-1 >= 0 && this.maze[i][j-1] != 1)
+        if(j-1 >= 0 && this.maze[i][j-1] != WALL)
         {
             character.setCurRow(j - 1);
             removeCake(character, i, j-1);
@@ -375,7 +427,7 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
         int i = character.getCurCol();
         int j = character.getCurRow();
 
-        if(j+1 < this.maze[0].length && this.maze[i][j+1] != 1)
+        if(j+1 < this.maze[0].length && this.maze[i][j+1] != WALL)
         {
             character.setCurRow(j + 1);
             removeCake(character, i, j+1);
@@ -402,7 +454,7 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
         int i = character.getCurCol();
         int j = character.getCurRow();
 
-        if(i+1 < this.maze.length && this.maze[i+1][j] != 1 && character.getDirection() == 2)
+        if(i+1 < this.maze.length && this.maze[i+1][j] != WALL)
         {
             character.setCurCol(i + 1);
             removeCake(character, i+1, j);
@@ -427,7 +479,7 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
     private boolean moveUp(Character character) {
         int i = character.getCurCol();
         int j = character.getCurRow();
-        if(i-1 >= 0 && this.maze[i-1][j] !=1)
+        if(i-1 >= 0 && this.maze[i-1][j] != WALL)
         {
             character.setCurCol(i - 1);
             removeCake(character, i-1, j);
@@ -527,6 +579,7 @@ public class Maze extends View implements View.OnClickListener, MediaPlayer.OnCo
 
     public void stopAllCharacters()
     {
+        this.isPaused = true;
         this.pacManHandler.removeCallbacksAndMessages(this.pacManRunner);
         this.ghost1Handler.removeCallbacksAndMessages(this.ghost1Runner);
         this.ghost2Handler.removeCallbacksAndMessages(this.ghost2Runner);

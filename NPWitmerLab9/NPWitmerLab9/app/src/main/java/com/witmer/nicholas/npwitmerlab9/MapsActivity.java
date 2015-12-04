@@ -28,14 +28,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     private LatLng curPosition;
-    private float zoom = 15;
+    private float zoom;
     private LocationManager location;
     private int markerCount = 0;
+    private int mapType = 1;
     private ArrayList<MarkerOptions> markers;
     private ArrayList<Marker> removableMarkers;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -53,6 +55,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         {
             markers = new ArrayList<MarkerOptions>();
             Toast.makeText(this, "For about long press Change Type button", Toast.LENGTH_SHORT).show();
+            this.zoom = 15f;
         }
         else
         {
@@ -63,8 +66,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             this.zoom = savedInstanceState.getFloat("zoom");
             this.markerCount = savedInstanceState.getInt("numMarkers");
+            this.mapType = savedInstanceState.getInt("type");
         }
-
     }
 
     @Override
@@ -74,6 +77,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         b.putSerializable("markers", this.markers);
         b.putFloat("zoom", this.zoom);
         b.putInt("numMarkers", this.markerCount);
+        b.putInt("type", this.mMap.getMapType());
     }
 
     @Override
@@ -109,6 +113,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         {
             mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         }
+        this.mapType = mMap.getMapType();
     }
 
     public void onMark(View v)
@@ -156,6 +161,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             this.curPosition = new LatLng(lat, lng);
             CameraUpdate update = CameraUpdateFactory.newLatLngZoom(curPosition, zoom);
             map.moveCamera(update);
+            mMap.setMapType(this.mapType);
         }
         map.setMyLocationEnabled(true);
     }
